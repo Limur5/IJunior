@@ -7,6 +7,8 @@ namespace AlarmSpace
 {
     public class Signalisation : MonoBehaviour
     {
+        [HideInInspector] public static Signalisation IsScriptActivated { get; set; }
+
         [SerializeField] private AudioSource _AudioSource;
 
         [SerializeField] private GameObject _Player;
@@ -20,7 +22,7 @@ namespace AlarmSpace
         private void Start()
         {
             _SignObjects = GameObject.FindGameObjectsWithTag("SignalisationBlock");
-            DoorArea.IsScriptActivated.enabled = false;
+            IsScriptActivated.enabled = false;
 
             foreach (GameObject item in _SignObjects)
             {
@@ -52,7 +54,7 @@ namespace AlarmSpace
             if (Vector3.Distance(_Player.transform.position, transform.position) > 20 && IsPlaying == true)
             {
                 _AudioSource.Stop();
-                DoorArea.IsScriptActivated.enabled = false;
+                IsScriptActivated.enabled = false;
                 IsPlaying = false;
 
                 foreach (Animator item in _listAnimator)
