@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-#pragma warning disable CS0619
 namespace AlarmSpace
 {
     public class Signalisation : MonoBehaviour
