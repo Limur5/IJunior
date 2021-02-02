@@ -14,15 +14,21 @@ namespace AlarmSpace
         private GameObject[] _SignObjects;
 
         public static bool IsPlaying = false;
+
+        private List<Animator> _listAnimator = new List<Animator>();
+
         private void Start()
         {
             _SignObjects = GameObject.FindGameObjectsWithTag("SignalisationBlock");
+            DoorArea.IsScriptActivated.enabled = false;
 
             foreach (GameObject item in _SignObjects)
             {
-                item.GetComponent<Animator>().enabled = false;
-
-                DoorArea.IsScriptActivated.enabled = false;
+                _listAnimator.Add(item.gameObject.GetComponent<Animator>());
+            }
+            foreach (Animator item in _listAnimator)
+            {
+                item.enabled = false;
             }
         }
 
@@ -35,11 +41,12 @@ namespace AlarmSpace
             _AudioSource.Play();
             IsPlaying = true;
 
-            foreach (GameObject item in _SignObjects)
+            foreach (Animator item in _listAnimator)
             {
-                item.GetComponent<Animator>().enabled = true;
+                item.enabled = true;
             }
         }
+        
         public void DeactivationDistance()
         {
             if (Vector3.Distance(_Player.transform.position, transform.position) > 20 && IsPlaying == true)
@@ -48,10 +55,10 @@ namespace AlarmSpace
                 DoorArea.IsScriptActivated.enabled = false;
                 IsPlaying = false;
 
-                foreach (GameObject item in _SignObjects)
+                foreach (Animator item in _listAnimator)
                 {
-                    item.GetComponent<Animator>().WriteDefaultValues();
-                    item.GetComponent<Animator>().enabled = false;
+                    item.WriteDefaultValues();
+                    item.enabled = false;
                 }
             }
         }
