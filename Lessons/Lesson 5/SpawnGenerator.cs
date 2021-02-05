@@ -33,7 +33,7 @@ namespace Spawner
             {
                 int randomPosition = Random.Range(0, _spawnPoints.Length);
 
-                Instantiate(_sphere, _spawnPoints[randomPosition].transform.position, Quaternion.identity);
+                Instantiate(_sphere, _spawnPoints[randomPosition].position, Quaternion.identity);
 
                 yield return _frequency;
             }
