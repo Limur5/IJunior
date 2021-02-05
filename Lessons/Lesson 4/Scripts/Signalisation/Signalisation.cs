@@ -7,24 +7,26 @@ namespace AlarmSpace
 {
     public class Signalisation : MonoBehaviour
     {
-        [HideInInspector] public static Signalisation IsScriptActivated { get; set; }
-
         [SerializeField] private AudioSource _AudioSource;
 
         [SerializeField] private GameObject _Player;
 
-        private GameObject[] _SignObjects;
+        private SignalisationObject[] _SignalisationObject;
 
         public static bool IsPlaying = false;
 
         private List<Animator> _listAnimator = new List<Animator>();
 
+        private WaitForFixedUpdate _UpdatingData;
+        private Coroutine _coroutine;
+
         private void Start()
         {
-            _SignObjects = GameObject.FindGameObjectsWithTag("SignalisationBlock");
-            IsScriptActivated.enabled = false;
+            _SignalisationObject = FindObjectsOfType<SignalisationObject>();
 
-            foreach (GameObject item in _SignObjects)
+            GetComponent<Signalisation>().enabled = false;
+
+            foreach (SignalisationObject item in _SignalisationObject)
             {
                 _listAnimator.Add(item.gameObject.GetComponent<Animator>());
             }
@@ -33,35 +35,41 @@ namespace AlarmSpace
                 item.enabled = false;
             }
         }
-
-        private void FixedUpdate()
-        {
-            DeactivationDistance();
-        }
+        
         public void Play()
         {
             _AudioSource.Play();
             IsPlaying = true;
+            gameObject.GetComponent<Signalisation>().enabled = true;
+
+            _coroutine = StartCoroutine(CheckDistance());
 
             foreach (Animator item in _listAnimator)
             {
                 item.enabled = true;
             }
         }
-        
-        public void DeactivationDistance()
-        {
-            if (Vector3.Distance(_Player.transform.position, transform.position) > 20 && IsPlaying == true)
-            {
-                _AudioSource.Stop();
-                IsScriptActivated.enabled = false;
-                IsPlaying = false;
 
-                foreach (Animator item in _listAnimator)
-                {
-                    item.WriteDefaultValues();
-                    item.enabled = false;
-                }
+        public IEnumerator CheckDistance()
+        {
+            while (Vector3.Distance(_Player.transform.position, transform.position) < 20)
+            {
+                yield return _UpdatingData;
+            }
+
+            _AudioSource.Stop();
+            gameObject.GetComponent<Signalisation>().enabled = false;
+            IsPlaying = false;
+
+            DeactivatedAnimations();
+            StopCoroutine(_coroutine);
+        }
+        public void DeactivatedAnimations()
+        {
+            foreach (Animator item in _listAnimator)
+            {
+                item.WriteDefaultValues();
+                item.enabled = false;
             }
         }
     }
