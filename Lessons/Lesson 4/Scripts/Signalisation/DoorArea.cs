@@ -7,19 +7,12 @@ namespace AlarmSpace
 {
     public class DoorArea : MonoBehaviour
     {
-        
-
         [SerializeField] private UnityEvent _reached;
 
-        private void Start()
-        {
-            Signalisation.IsScriptActivated = gameObject.GetComponent<Signalisation>();
-        }
         private void OnTriggerEnter(Collider collider)
         {
-            if (collider.CompareTag("Player") && Signalisation.IsPlaying == false)
+            if (collider.TryGetComponent(out Player player) && Signalisation.IsPlaying == false)
             {
-                Signalisation.IsScriptActivated.enabled = true;
                 _reached?.Invoke();
             }
         }
